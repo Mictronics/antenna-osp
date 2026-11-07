@@ -4,14 +4,17 @@
 #include <SD.h>
 
 // A screen is a background image on SD plus touch widgets. Edit SCREENS to add pages.
-enum Kind : uint8_t { ROUTE, NAV };  // ROUTE: select input arg (1..6); NAV: go to screen arg
+enum Kind : uint8_t { ROUTE, NAV, BRIGHT };  // ROUTE: input arg (1..6); NAV: screen arg; BRIGHT: backlight level arg (1..4)
 struct Widget { uint16_t x, y, w, h; Kind kind; uint8_t arg; };
 struct Screen { const char *bg; const Widget *w; size_t n; };
 
 // Landscape 480x320. Route buttons: 3x2 grid, 146x115 px; nav button along the bottom.
 #define RT(i) {(uint16_t)(10 + 157 * (((i) - 1) % 3)), (uint16_t)(10 + 125 * (((i) - 1) / 3)), 146, 115, ROUTE, i}
 static const Widget MAIN_W[] = {RT(1), RT(2), RT(3), RT(4), RT(5), RT(6), {10, 260, 460, 50, NAV, 1}};
-static const Widget SETTINGS_W[] = {{10, 260, 460, 50, NAV, 0}};
+#define BR(i, x) {x, 100, 108, 60, BRIGHT, i}  // x from the design (uneven 117/118 px pitch)
+static const Widget SETTINGS_W[] = {BR(1, 10), BR(2, 127), BR(3, 245), BR(4, 362), {10, 260, 460, 50, NAV, 0}};
+static const uint8_t BRIGHT_PCT[] = {25, 50, 75, 100};  // index = level - 1
+static const char *SETTINGS_FILE = "/bright.txt";
 
 static const Screen SCREENS[] = {
     {"/main.rgb565", MAIN_W, sizeof(MAIN_W) / sizeof(Widget)},
@@ -23,6 +26,7 @@ static const uint16_t COL_ON = 0x07E0, COL_BG = 0x2104, COL_BTN = 0x4208;
 
 static uint8_t cur;
 static uint8_t shown;  // route currently marked on screen, 0 = none
+static uint8_t level = 4;  // backlight level 1..4
 static bool pressed;
 static bool ready;  // display initialised; relays may change before that
 static File bg;
@@ -48,18 +52,41 @@ static void frame(const Widget &b, bool fill) {
   for (auto &r : e) fill ? display_fill(r[0], r[1], r[2], r[3], COL_ON) : restoreRect(r[0], r[1], r[2], r[3]);
 }
 
-static void mark(uint8_t route, bool on) {
+static void mark(Kind k, uint8_t arg, bool on) {
   const Screen &s = SCREENS[cur];
   for (size_t i = 0; i < s.n; i++)
-    if (s.w[i].kind == ROUTE && s.w[i].arg == route) frame(s.w[i], on);
+    if (s.w[i].kind == k && s.w[i].arg == arg) frame(s.w[i], on);
+}
+
+static void brightness_load() {
+  File f = SD.open(SETTINGS_FILE, "r");
+  if (f) {
+    int v = f.read();
+    if (v >= '1' && v <= '4') level = v - '0';
+    f.close();
+  }
+  display_backlight(BRIGHT_PCT[level - 1]);
+}
+
+static void brightness_set(uint8_t l) {
+  mark(BRIGHT, level, false);
+  level = l;
+  mark(BRIGHT, level, true);
+  display_backlight(BRIGHT_PCT[level - 1]);
+  SD.remove(SETTINGS_FILE);  // FILE_WRITE appends
+  File f = SD.open(SETTINGS_FILE, FILE_WRITE);
+  if (f) {
+    f.write('0' + level);
+    f.close();
+  }
 }
 
 void ui_draw_route() {
   if (!ready) return;
   uint8_t r = route_get();
   if (r == shown) return;
-  mark(shown, false);
-  mark(r, true);
+  mark(ROUTE, shown, false);
+  mark(ROUTE, r, true);
   shown = r;
 }
 
@@ -79,6 +106,7 @@ static void drawScreen() {
     for (size_t i = 0; i < s.n; i++) display_fill(s.w[i].x, s.w[i].y, s.w[i].w, s.w[i].h, COL_BTN);
   }
   shown = 0;
+  mark(BRIGHT, level, true);
   ui_draw_route();
 }
 
@@ -89,6 +117,7 @@ void ui_init() {
   SPI1.setTX(27);
   SPI1.setRX(28);
   SD.begin(31, 25000000, SPI1);  // 25 MHz; lower if reads fail. Missing card just means plain buttons
+  brightness_load();
   ready = true;
   drawScreen();
 }
@@ -103,6 +132,8 @@ void ui_poll() {
       if (x < w.x || x >= w.x + w.w || y < w.y || y >= w.y + w.h) continue;
       if (w.kind == ROUTE) {
         route_set(w.arg);
+      } else if (w.kind == BRIGHT) {
+        brightness_set(w.arg);
       } else {
         cur = w.arg;
         drawScreen();

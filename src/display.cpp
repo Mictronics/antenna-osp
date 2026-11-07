@@ -60,7 +60,7 @@ void display_init() {
   delay(120);
   cmd(0x21);  // inversion on
   cmd(0x29);  // display on
-  digitalWrite(PIN_BL, HIGH);
+  display_backlight(100);
 }
 
 void display_blit(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint8_t *buf) {
@@ -79,4 +79,9 @@ void display_fill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t c) {
   digitalWrite(PIN_CS, LOW);
   for (uint16_t j = 0; j < h; j++) SPI.transfer(row, nullptr, (size_t)w * 2);
   digitalWrite(PIN_CS, HIGH);
+}
+
+void display_backlight(uint8_t pct) {
+  analogWriteFreq(20000);  // above audible range
+  analogWrite(PIN_BL, pct * 255 / 100);
 }
