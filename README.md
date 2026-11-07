@@ -6,14 +6,14 @@ It switches 6 RF inputs to 1 output with 5 relays, can be operated by touch, and
 accepts SCPI commands over RS485.
 
 > **Status:** the firmware builds and the SCPI parser passes a host-side test.
-> It has not yet been run on hardware.
 
 ## Hardware
 
-- Waveshare RP2350-Touch-LCD-3.5 (RP2350B, 16 MB flash, ST7796 320x480 display, FT6336U touch)
-- 5 active-low relay modules on GPIO 0, 1, 2, 3, 5 (header pins 6, 8, 10, 12, 16)
+- Waveshare RP2350-Touch-LCD-3.5 (RP2350B, 16 MB flash, ST7796 480x320 landscape display, FT6336U touch)
 - Waveshare TTL-to-RS485 (C) module on UART1: TX GPIO8, RX GPIO9, 115200 baud
 - FAT32/exFAT SD card for the screen backgrounds
+- 5V 8-Channel relay module with active-low signals on GPIO 0, 1, 2, 3, 5 (header pins 6, 8, 10, 12, 16)
+- The 8-Channel relay module is driving five 12V RF relays RADIALL R570412000
 
 The relays form a pyramid so every path has the same loss:
 
