@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-DIY clone of the Rohde&Schwarz OSP (switch/control platform) on the Waveshare RP2350-Touch-LCD-3.5 (RP2350B, 520 KB SRAM, no PSRAM, ST7796 320x480 SPI display, FT6336 I2C touch).
+DIY clone of the Rohde&Schwarz OSP (switch/control platform) on the Waveshare RP2350-Touch-LCD-3.5 (RP2350B, 520 KB SRAM, no PSRAM, ST7796 480x320 landscape SPI display, FT6336 I2C touch).
 
 ## Build
 
@@ -22,7 +22,7 @@ PlatformIO, Arduino framework via the earlephilhower Arduino-Pico core on the co
 
 ## UI
 
-Thin custom layer, no LVGL: `display` (ST7796 on SPI0, window blit/fill), `touch` (FT6336U on Wire1), `ui` (`SCREENS` table in `src/ui.cpp`: each screen = background `/name.rgb565` from SD + widgets, ROUTE selects input 1..6 and frames the active button, NAV switches screen; no image falls back to plain grey buttons). SD is on SPI1 (SCK26 MOSI27 MISO28 CS31), FAT32/exFAT. Images are 320x480 big-endian RGB565, made with `tools/png2rgb565.py`. `route_set()`/`route_get()` in `main.cpp` are shared by SCPI and the UI. GPIO28 is also the battery ADC in Waveshare's examples (shared with SD MISO).
+Thin custom layer, no LVGL: `display` (ST7796 on SPI0, window blit/fill), `touch` (FT6336U on Wire1), `ui` (`SCREENS` table in `src/ui.cpp`: each screen = background `/name.rgb565` from SD + widgets, ROUTE selects input 1..6 and frames the active button, NAV switches screen; no image falls back to plain grey buttons). SD is on SPI1 (SCK26 MOSI27 MISO28 CS31), FAT32/exFAT. Images are 480x320 (landscape) big-endian RGB565, made with `tools/png2rgb565.py`. `route_set()`/`route_get()` in `main.cpp` are shared by SCPI and the UI. GPIO28 is also the battery ADC in Waveshare's examples (shared with SD MISO).
 
 ## SCPI
 
@@ -40,5 +40,5 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 - RS485 direction control not implemented; confirm the module is auto-direction.
 - Not yet tested on hardware or with ELEKTRA: *IDN? format, ROUT:PATH:LAST? quoting and module detection are guesses from the manual.
 - Remote operation does not lock the touch UI (a real OSP does).
-- Touch coordinate orientation vs. the panel (MADCTL 0x48) is untested; check hit rects on hardware.
+- Landscape: MADCTL 0x28 in `display.cpp` and the matching x/y swap in `touch.cpp` are untested; if the image is upside down use 0xE8 and flip the touch mapping, check hit rects on hardware.
 - GPIO4 is claimed by SPI0 RX by default in the variant; the LCD is write-only, so it may be freed later.

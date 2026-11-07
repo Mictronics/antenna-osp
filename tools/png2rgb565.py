@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Convert an image to 320x480 big-endian RGB565 for the SD card: png2rgb565.py in.png out.rgb565"""
+"""Convert an image to 480x320 big-endian RGB565 for the SD card: png2rgb565.py in.png out.rgb565"""
 import sys
 from PIL import Image
 
-img = Image.open(sys.argv[1]).convert("RGB").resize((320, 480))
+img = Image.open(sys.argv[1]).convert("RGB").resize((480, 320))
 out = bytearray()
 for r, g, b in img.getdata():
     v = (r & 0xF8) << 8 | (g & 0xFC) << 3 | b >> 3

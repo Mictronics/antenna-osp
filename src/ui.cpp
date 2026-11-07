@@ -8,10 +8,10 @@ enum Kind : uint8_t { ROUTE, NAV };  // ROUTE: select input arg (1..6); NAV: go 
 struct Widget { uint16_t x, y, w, h; Kind kind; uint8_t arg; };
 struct Screen { const char *bg; const Widget *w; size_t n; };
 
-// Route buttons: 2x3 grid, 145x125 px; nav button along the bottom.
-#define RT(i) {(uint16_t)(10 + 155 * (((i) - 1) % 2)), (uint16_t)(10 + 135 * (((i) - 1) / 2)), 145, 125, ROUTE, i}
-static const Widget MAIN_W[] = {RT(1), RT(2), RT(3), RT(4), RT(5), RT(6), {10, 420, 300, 50, NAV, 1}};
-static const Widget SETTINGS_W[] = {{10, 420, 300, 50, NAV, 0}};
+// Landscape 480x320. Route buttons: 3x2 grid, 146x115 px; nav button along the bottom.
+#define RT(i) {(uint16_t)(10 + 157 * (((i) - 1) % 3)), (uint16_t)(10 + 125 * (((i) - 1) / 3)), 146, 115, ROUTE, i}
+static const Widget MAIN_W[] = {RT(1), RT(2), RT(3), RT(4), RT(5), RT(6), {10, 260, 460, 50, NAV, 1}};
+static const Widget SETTINGS_W[] = {{10, 260, 460, 50, NAV, 0}};
 
 static const Screen SCREENS[] = {
     {"/main.rgb565", MAIN_W, sizeof(MAIN_W) / sizeof(Widget)},
@@ -29,7 +29,7 @@ static File bg;
 
 // Repaint a rect from the background image (or a plain button colour without one).
 static void restoreRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
-  static uint8_t buf[1280];  // largest piece: the 145x4 frame edge
+  static uint8_t buf[1280];  // largest piece: the 146x4 frame edge
   if (!bg) return display_fill(x, y, w, h, COL_BTN);
   for (uint16_t r = 0; r < h; r++) {
     bg.seek(((uint32_t)(y + r) * LCD_W + x) * 2);

@@ -22,7 +22,9 @@ bool touch_read(uint16_t &x, uint16_t &y) {
   if (Wire1.requestFrom(ADDR, (uint8_t)5) != 5) return false;
   for (auto &v : b) v = Wire1.read();
   if ((b[0] & 0x0F) == 0) return false;
-  x = ((b[1] & 0x0F) << 8) | b[2];
-  y = ((b[3] & 0x0F) << 8) | b[4];
+  // Panel is natively 320x480 portrait; rotate to match MADCTL 0x28 (flip with 0xE8: x = 479-ty, y = tx).
+  uint16_t tx = ((b[1] & 0x0F) << 8) | b[2], ty = ((b[3] & 0x0F) << 8) | b[4];
+  x = ty;
+  y = 319 - tx;
   return true;
 }

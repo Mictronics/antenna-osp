@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-constexpr uint16_t LCD_W = 320, LCD_H = 480;
+constexpr uint16_t LCD_W = 480, LCD_H = 320;
 
 void display_init();
 // data: big-endian RGB565, w*h pixels, sent to window at (x,y).

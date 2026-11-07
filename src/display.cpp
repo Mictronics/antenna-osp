@@ -42,7 +42,7 @@ void display_init() {
 
   // Init sequence from the Waveshare example (LCD_3in5.cpp).
   cmd(0x11); delay(120);
-  cmd(0x36); data({0x48});  // portrait, BGR
+  cmd(0x36); data({0x28});  // landscape (MV), BGR; try 0xE8 if upside down
   cmd(0x3A); data({0x05});  // 16 bit/pixel
   cmd(0xF0); data({0xC3});
   cmd(0xF0); data({0x96});
