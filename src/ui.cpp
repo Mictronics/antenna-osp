@@ -6,7 +6,8 @@
 // A screen is a background image on SD plus touch widgets. Edit SCREENS to add pages.
 enum Kind : uint8_t { ROUTE, NAV, BRIGHT, LOCAL };  // ROUTE: input arg (1..6); NAV: screen arg; BRIGHT: backlight level arg (1..4); LOCAL: leave remote lock
 struct Widget { uint16_t x, y, w, h; Kind kind; uint8_t arg; };
-struct Screen { const char *bg; const Widget *w; size_t n; };
+struct Screen { const char *bg;  // SD base name: /name.rgb565, or /name-hc.rgb565 in high contrast
+   const Widget *w; size_t n; };
 
 // Landscape 480x320. Route buttons: 3x2 grid, 146x115 px; nav button along the bottom.
 #define RT(i) {(uint16_t)(10 + 157 * (((i) - 1) % 3)), (uint16_t)(10 + 125 * (((i) - 1) / 3)), 146, 115, ROUTE, i}
@@ -20,9 +21,9 @@ static const Widget REMOTE_W[] = {{0, 0, 480, 320, LOCAL, 0}};  // any touch ret
 static const uint8_t REMOTE_SCREEN = 2;
 
 static const Screen SCREENS[] = {
-    {"/main.rgb565", MAIN_W, sizeof(MAIN_W) / sizeof(Widget)},
-    {"/settings.rgb565", SETTINGS_W, sizeof(SETTINGS_W) / sizeof(Widget)},
-    {"/remote.rgb565", REMOTE_W, 1},
+    {"/main", MAIN_W, sizeof(MAIN_W) / sizeof(Widget)},
+    {"/settings", SETTINGS_W, sizeof(SETTINGS_W) / sizeof(Widget)},
+    {"/remote", REMOTE_W, 1},
 };
 
 static const uint16_t FRAME = 4;  // active-route frame thickness, inside the button
@@ -31,6 +32,7 @@ static const uint16_t COL_ON = 0x07E0, COL_BG = 0x2104, COL_BTN = 0x4208;
 static uint8_t cur;
 static uint8_t prev;  // screen to return to after remote lock
 static uint8_t shown;  // route currently marked on screen, 0 = none
+static bool hc;  // high-contrast backgrounds, set via SCPI DISP:THEM
 static uint8_t level = 4;  // backlight level 1..4
 static bool pressed;
 static bool ready;  // display initialised; relays may change before that
@@ -63,14 +65,27 @@ static void mark(Kind k, uint8_t arg, bool on) {
     if (s.w[i].kind == k && s.w[i].arg == arg) frame(s.w[i], on);
 }
 
+static void drawScreen();
+
 static void brightness_load() {
   File f = SD.open(SETTINGS_FILE, "r");
   if (f) {
     int v = f.read();
     if (v >= '1' && v <= '4') level = v - '0';
+    hc = f.read() == 'H';
     f.close();
   }
   display_backlight(BRIGHT_PCT[level - 1]);
+}
+
+static void settings_save() {
+  SD.remove(SETTINGS_FILE);  // FILE_WRITE appends
+  File f = SD.open(SETTINGS_FILE, FILE_WRITE);
+  if (f) {
+    f.write('0' + level);
+    f.write(hc ? 'H' : 'N');
+    f.close();
+  }
 }
 
 static void brightness_set(uint8_t l) {
@@ -78,12 +93,16 @@ static void brightness_set(uint8_t l) {
   level = l;
   mark(BRIGHT, level, true);
   display_backlight(BRIGHT_PCT[level - 1]);
-  SD.remove(SETTINGS_FILE);  // FILE_WRITE appends
-  File f = SD.open(SETTINGS_FILE, FILE_WRITE);
-  if (f) {
-    f.write('0' + level);
-    f.close();
-  }
+  settings_save();
+}
+
+bool theme_get() { return hc; }
+
+void theme_set(bool on) {
+  if (on == hc) return;
+  hc = on;
+  settings_save();
+  if (ready) drawScreen();
 }
 
 void ui_draw_route() {
@@ -99,7 +118,9 @@ static void drawScreen() {
   const Screen &s = SCREENS[cur];
   static uint8_t strip[LCD_W * 2 * 16];  // 16 rows
   if (bg) bg.close();
-  bg = SD.open(s.bg, "r");
+  char path[32];
+  snprintf(path, sizeof path, "%s%s.rgb565", s.bg, hc ? "-hc" : "");
+  bg = SD.open(path, "r");
   if (bg) {
     bg.seek(0);
     for (uint16_t y = 0; y < LCD_H; y += 16) {

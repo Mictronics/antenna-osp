@@ -8,4 +8,6 @@ uint8_t route_get();        // 0 = relays match no route
 void ui_init();
 void ui_poll();               // call from loop(): handles touch
 void ui_draw_route();       // move the active-route marker
+bool theme_get();          // true: high-contrast backgrounds
+void theme_set(bool hc);   // persisted in the settings file, redraws the screen
 void ui_remote(bool on);   // true: show the remote screen and ignore buttons; false: back to local

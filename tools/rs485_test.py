@@ -53,6 +53,16 @@ check("ROUT:PATH:DEL:ALL", "")
 check("FOO:BAR", "")
 check("SYST:ERR?", '-113,"Undefined header"\n')
 
+# theme (persists on SD, so restore normal at the end)
+check("DISP:THEM HCON", "")
+check("DISP:THEM?", "HCON\n")
+look("REMOTE screen now high contrast?")
+check("DISP:THEM NORM", "")
+check("DISP:THEM?", "NORM\n")
+look("REMOTE screen back to normal?")
+check("DISP:THEM foo", "")
+check("SYST:ERR?", '-224,"Illegal parameter value"\n')
+
 # unlock
 check("SYST:LOC", "")
 look("UI should be back on the main screen; touch a route button. Then touch the REMOTE screen "

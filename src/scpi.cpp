@@ -218,6 +218,13 @@ static void cErrAll(SCPI_C, SCPI_P, Stream &s) {
 }
 static void cPreset(SCPI_C, SCPI_P, Stream &) { doReset(); }
 static void cLocal(SCPI_C, SCPI_P, Stream &) { remote_set(false); }
+static void cTheme(SCPI_C c, SCPI_P p, Stream &s) {
+  if (isQuery(c)) return say(s, theme_get() ? "HCON" : "NORM");
+  const char *a = par(p, 0);
+  char k = a ? toupper(a[0]) : 0;
+  if (k == 'H' || k == 'N') theme_set(k == 'H');
+  else err(-224, "Illegal parameter value");
+}
 static void cVersion(SCPI_C, SCPI_P, Stream &s) { say(s, "1999.0"); }
 static void cHwInfo(SCPI_C, SCPI_P, Stream &s) {
   say(s, "\"F01|OSP230|000001|0000.0000.00|0|01.00\",\"F01M00|OSPMAINBOARD|000001|0000.0000.00|0|01.00\","
@@ -357,6 +364,7 @@ static void registerCommands() {
       {"*ESR?", cEsr}, {"*STB?", cStb},
       {"SYSTem:ERRor?", cErrNext}, {"SYSTem:ERRor:NEXT?", cErrNext}, {"SYSTem:ERRor:ALL?", cErrAll},
       {"SYSTem:PRESet", cPreset}, {"SYSTem:VERSion?", cVersion},
+      {"DISPlay:THEMe", cTheme}, {"DISPlay:THEMe?", cTheme},
       {"SYSTem:LOCal", cLocal}, {"SYSTem:REMote", cNop},
       {"DIAGnostic:SERVice:HWINfo?", cHwInfo},
       {"ROUTe:CLOSe", cClose}, {"ROUTe:CLOSe?", cClose}, {"ROUTe:CLOSe:COMBined", cCombined},
