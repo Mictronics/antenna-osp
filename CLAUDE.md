@@ -45,4 +45,5 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 - Not yet tested on hardware or with ELEKTRA: *IDN? format, ROUT:PATH:LAST? quoting and module detection are guesses from the manual.
 - Remote operation does not lock the touch UI (a real OSP does).
 - Landscape: MADCTL 0x28 in `display.cpp` and the matching x/y swap in `touch.cpp` are untested; if the image is upside down use 0xE8 and flip the touch mapping, check hit rects on hardware.
+- AXP2101 PMIC (Wire1 SDA34/SCL35, IRQ GPIO39) is deliberately not supported: no LiPo planned, device runs from external 5V/12V. Revisit only if a battery is fitted (then a read-only VBUS/battery% status is enough).
 - GPIO4 is claimed by SPI0 RX by default in the variant; the LCD is write-only, so it may be freed later.
