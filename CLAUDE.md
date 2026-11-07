@@ -43,7 +43,7 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 - Custom board in `boards/` + variant in `variants/` (RP2350B, 16 MB flash), pins from Waveshare examples. Wire0 pins in the variant are unused placeholders.
 - RS485 direction control not implemented; confirm the module is auto-direction.
 - Not yet tested on hardware or with ELEKTRA: *IDN? format, ROUT:PATH:LAST? quoting and module detection are guesses from the manual.
-- Remote operation does not lock the touch UI (a real OSP does).
+- Remote lock (untested on hardware): any received line calls `remote_set(true)` -> `ui_remote()` shows `/remote.rgb565` (third screen, full-screen LOCAL widget); a touch or `SYST:LOC` returns to the previous screen. `screens/remote.*` is a placeholder; make real artwork.
 - Landscape: MADCTL 0x28 in `display.cpp` and the matching x/y swap in `touch.cpp` are untested; if the image is upside down use 0xE8 and flip the touch mapping, check hit rects on hardware.
 - AXP2101 PMIC (Wire1 SDA34/SCL35, IRQ GPIO39) is deliberately not supported: no LiPo planned, device runs from external 5V/12V. Revisit only if a battery is fitted (then a read-only VBUS/battery% status is enough).
 - GPIO4 is claimed by SPI0 RX by default in the variant; the LCD is write-only, so it may be freed later.

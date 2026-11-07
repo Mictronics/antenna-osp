@@ -9,6 +9,8 @@
 #include <string>
 
 static uint8_t relays;
+static bool remote;
+void remote_set(bool on) { remote = on; }
 uint8_t relays_get() { return relays; }
 void relays_apply(uint8_t mask, uint8_t val) { relays = (relays & ~mask) | (val & mask); }
 
@@ -20,7 +22,9 @@ static std::string ask(const char *line) { got.clear(); scpi_handle(line, sink);
 
 int main() {
   EQ("*IDN?", "DIY,OSP-EMU,000001," FW_VERSION "\n");
-  EQ("*OPC?", "1\n");
+  EQ("*OPC?", "1\n"); assert(remote);
+  EQ("SYST:LOC", ""); assert(!remote);
+  EQ("*OPC?", "1\n"); assert(remote);
   EQ("SYST:ERR?", "0,\"No error\"\n");
 
   EQ("ROUT:CLOS (@F01M01(0112))", ""); assert(relays == 0b00010);

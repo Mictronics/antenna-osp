@@ -5,5 +5,8 @@
 uint8_t relays_get();
 void relays_apply(uint8_t mask, uint8_t val);
 
+// Remote lock of the local UI: set on every received line, cleared by SYST:LOC.
+void remote_set(bool on);
+
 // Handle one complete line (no terminator); every reply, newline included, goes to out().
 void scpi_handle(const char *line, void (*out)(const char *));

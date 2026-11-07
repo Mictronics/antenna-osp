@@ -47,6 +47,8 @@ uint8_t route_get() {
   return 0;
 }
 
+void remote_set(bool on) { ui_remote(on); }
+
 static void reply(const char *s) { RS485.print(s); }
 
 void setup() {

@@ -217,6 +217,7 @@ static void cErrAll(SCPI_C, SCPI_P, Stream &s) {
   say(s, "%s", o);
 }
 static void cPreset(SCPI_C, SCPI_P, Stream &) { doReset(); }
+static void cLocal(SCPI_C, SCPI_P, Stream &) { remote_set(false); }
 static void cVersion(SCPI_C, SCPI_P, Stream &s) { say(s, "1999.0"); }
 static void cHwInfo(SCPI_C, SCPI_P, Stream &s) {
   say(s, "\"F01|OSP230|000001|0000.0000.00|0|01.00\",\"F01M00|OSPMAINBOARD|000001|0000.0000.00|0|01.00\","
@@ -356,6 +357,7 @@ static void registerCommands() {
       {"*ESR?", cEsr}, {"*STB?", cStb},
       {"SYSTem:ERRor?", cErrNext}, {"SYSTem:ERRor:NEXT?", cErrNext}, {"SYSTem:ERRor:ALL?", cErrAll},
       {"SYSTem:PRESet", cPreset}, {"SYSTem:VERSion?", cVersion},
+      {"SYSTem:LOCal", cLocal}, {"SYSTem:REMote", cNop},
       {"DIAGnostic:SERVice:HWINfo?", cHwInfo},
       {"ROUTe:CLOSe", cClose}, {"ROUTe:CLOSe?", cClose}, {"ROUTe:CLOSe:COMBined", cCombined},
       {"ROUTe:PATH", cPathDef}, {"ROUTe:PATH?", cPathDef},
@@ -374,6 +376,7 @@ void scpi_handle(const char *line, Out out) {
   strncpy(msg, line, sizeof msg - 1);  // Execute() modifies the message
   msg[sizeof msg - 1] = 0;
   sink.n = 0;
+  remote_set(true);  // before Execute so SYST:LOC can undo it
   parser.Execute(msg, sink);
   sink.buf[sink.n] = 0;
   if (sink.n) out(sink.buf);

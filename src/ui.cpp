@@ -4,7 +4,7 @@
 #include <SD.h>
 
 // A screen is a background image on SD plus touch widgets. Edit SCREENS to add pages.
-enum Kind : uint8_t { ROUTE, NAV, BRIGHT };  // ROUTE: input arg (1..6); NAV: screen arg; BRIGHT: backlight level arg (1..4)
+enum Kind : uint8_t { ROUTE, NAV, BRIGHT, LOCAL };  // ROUTE: input arg (1..6); NAV: screen arg; BRIGHT: backlight level arg (1..4); LOCAL: leave remote lock
 struct Widget { uint16_t x, y, w, h; Kind kind; uint8_t arg; };
 struct Screen { const char *bg; const Widget *w; size_t n; };
 
@@ -16,15 +16,20 @@ static const Widget SETTINGS_W[] = {BR(1, 10), BR(2, 127), BR(3, 245), BR(4, 362
 static const uint8_t BRIGHT_PCT[] = {25, 50, 75, 100};  // index = level - 1
 static const char *SETTINGS_FILE = "/bright.txt";
 
+static const Widget REMOTE_W[] = {{0, 0, 480, 320, LOCAL, 0}};  // any touch returns to local
+static const uint8_t REMOTE_SCREEN = 2;
+
 static const Screen SCREENS[] = {
     {"/main.rgb565", MAIN_W, sizeof(MAIN_W) / sizeof(Widget)},
     {"/settings.rgb565", SETTINGS_W, sizeof(SETTINGS_W) / sizeof(Widget)},
+    {"/remote.rgb565", REMOTE_W, 1},
 };
 
 static const uint16_t FRAME = 4;  // active-route frame thickness, inside the button
 static const uint16_t COL_ON = 0x07E0, COL_BG = 0x2104, COL_BTN = 0x4208;
 
 static uint8_t cur;
+static uint8_t prev;  // screen to return to after remote lock
 static uint8_t shown;  // route currently marked on screen, 0 = none
 static uint8_t level = 4;  // backlight level 1..4
 static bool pressed;
@@ -110,6 +115,13 @@ static void drawScreen() {
   ui_draw_route();
 }
 
+void ui_remote(bool on) {
+  if (!ready || on == (cur == REMOTE_SCREEN)) return;
+  if (on) prev = cur;
+  cur = on ? REMOTE_SCREEN : prev;
+  drawScreen();
+}
+
 void ui_init() {
   display_init();
   touch_init();
@@ -132,6 +144,8 @@ void ui_poll() {
       if (x < w.x || x >= w.x + w.w || y < w.y || y >= w.y + w.h) continue;
       if (w.kind == ROUTE) {
         route_set(w.arg);
+      } else if (w.kind == LOCAL) {
+        ui_remote(false);
       } else if (w.kind == BRIGHT) {
         brightness_set(w.arg);
       } else {
