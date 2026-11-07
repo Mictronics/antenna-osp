@@ -34,6 +34,8 @@ Thin custom layer, no LVGL: `display` (ST7796 on SPI0, window blit/fill), `touch
 
 ELEKTRA reaches a real OSP over VISA/LAN; here RS485 is fixed (EMC), so a TCP-to-RS485 middleware/proxy is needed on the PC side. `*IDN?` answer is `SCPI_IDN` in `src/scpi.cpp`; the HWIN names (OSP230, OSP-B101) are what module detection reads.
 
+`tools/rs485_test.py [port]` (pyserial) is the RS485 hardware smoke test; it prompts you to check relays and the UI. `ROUT:CLOS` is additive, so it needs `*RST` between steps.
+
 Host test of the parser (against the fetched library): `g++ -std=c++17 -Itools/host -Isrc "-I$(ls -d .pio/libdeps/*/*/src | head -1)" -DSCPI_ARRAY_SYZE=24 -DSCPI_MAX_TOKENS=40 -DSCPI_MAX_COMMANDS=48 -DSCPI_HASH_TYPE=uint16_t -DSCPI_QUOTE_AWARE tools/scpi_test.cpp src/scpi.cpp -o /tmp/scpi_test && /tmp/scpi_test` (`tools/host/Arduino.h` is a minimal Arduino stand-in).
 
 Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, master), not here. Push it, then pin the full 40-char SHA in `platformio.ini`; PlatformIO can't resolve short hashes or unpushed commits. Never edit `.pio/libdeps`.
@@ -41,6 +43,7 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 ## Open items
 
 - Custom board in `boards/` + variant in `variants/` (RP2350B, 16 MB flash), pins from Waveshare examples. Wire0 pins in the variant are unused placeholders.
+- RS485 pins: GPIO8/9 (`Serial2`) are camera pins, not confirmed on the header; a first no-reaction on new wiring was a solder fault, so check joints and the TXD-to-RX crossover before changing pins. GPIO44/45 (`Serial1`, UART0) is the valid alternative.
 - RS485 works without direction control (module is auto-direction); `tools/rs485_test.py` passes on hardware (SCPI routing, paths, errors, remote lock).
 - Not yet tested with ELEKTRA: *IDN? format, ROUT:PATH:LAST? quoting and module detection are guesses from the manual.
 - Remote lock: any received line calls `remote_set(true)` -> `ui_remote()` shows `/remote.rgb565` (third screen, full-screen LOCAL widget); a touch or `SYST:LOC` returns to the previous screen.
