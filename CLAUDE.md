@@ -16,7 +16,7 @@ PlatformIO, Arduino framework via the earlephilhower Arduino-Pico core on the co
 
 ## Hardware mapping
 
-- RF switch tree, 5 relays K1..K5 on GPIO0,1,2,3,5 (header pins 6,8,10,12,16), active-low modules (`ACTIVE_LOW` in `src/main.cpp`). K1 picks the K2/K3 branch; K2 = IN1/IN2; K3 picks K4/K5; K4 = IN3/IN4; K5 = IN5/IN6. `ROUTE_MASK` in `src/main.cpp` maps route 1..6 to relay states (NC = first input of each pair; edit if wiring differs). GPIO4 is LCD MISO (SPI0), do not use.
+- RF switch tree, 5 relays K1..K5 on GPIO0,1,2,3,5 (header pins 6,8,10,12,16), active-low modules (`ACTIVE_LOW` in `src/main.cpp`). K1 picks the K2/K3 branch; K2 = IN1/IN2; K3 picks K4/K5; K4 = IN3/IN4; K5 = IN5/IN6. `ROUTE_MASK` in `src/main.cpp` maps route 1..6 to relay states (NC = first input of each pair; edit if wiring differs). The variant must define `PICO_RP2350B 1`, otherwise the core rejects GPIO >= 30 (SD CS is 31). GPIO4 is LCD MISO (SPI0), do not use.
 - SCPI over RS485 via Waveshare TTL-to-RS485 (C) module on UART1 (`Serial2`): TX=GPIO8, RX=GPIO9, 115200 baud.
 - Taken by board (from Waveshare examples in ~/git/RP2350-Touch-LCD-3.5): LCD SPI0 CLK18/MOSI19/MISO4/CS21/DC20/RST23/BL22; touch+IMU+RTC+codec on Wire1 SDA34/SCL35, touch RST24/INT25, IMU INT1 14, battery ADC 28. Camera uses GPIO0+ only if fitted. Free header GPIOs: 6,7,41-47.
 

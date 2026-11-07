@@ -3,7 +3,7 @@
 // Pin definitions taken from:
 //    https://datasheets.raspberrypi.org/pico/pico-datasheet.pdf
 
-#define PICO_RP2350A 0
+#define PICO_RP2350B 1  // 48 GPIOs; without it the core rejects GPIO >= 30 (SD CS = 31)
 
 // LEDs (no user LED; GPIO22 is the LCD backlight)
 #define PIN_LED        (22u)
