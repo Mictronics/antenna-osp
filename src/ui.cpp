@@ -88,7 +88,7 @@ void ui_init() {
   SPI1.setSCK(26);
   SPI1.setTX(27);
   SPI1.setRX(28);
-  SD.begin(31, 5000000, SPI1);  // 5 MHz as in Waveshare's example; missing card just means plain buttons
+  SD.begin(31, 25000000, SPI1);  // 25 MHz; lower if reads fail. Missing card just means plain buttons
   ready = true;
   drawScreen();
 }
