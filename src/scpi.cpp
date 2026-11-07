@@ -11,8 +11,11 @@
 #include <string.h>
 #include <strings.h>
 
+#ifndef FW_VERSION
+#define FW_VERSION "0.0.0"  // host test; the real one is set in platformio.ini
+#endif
 #ifndef SCPI_IDN
-#define SCPI_IDN "DIY,OSP-EMU,000001,0.3"  // change if ELEKTRA rejects this identity
+#define SCPI_IDN "DIY,OSP-EMU,000001," FW_VERSION  // change if ELEKTRA rejects this identity
 #endif
 
 static const int MAXPATH = 24, MAXITEM = 16;

@@ -14,6 +14,10 @@ PlatformIO, Arduino framework via the earlephilhower Arduino-Pico core on the co
 - Upload: `pio run -t upload` (or hold BOOT and drag the UF2 onto the USB drive)
 - Monitor: `pio device monitor`
 
+## Versioning
+
+SemVer. The single source is `-DFW_VERSION` in `platformio.ini` (also used in `*IDN?`). To release: bump it, commit, `git tag -a vX.Y.Z -m "..."`, and push the tag. The on-screen version is baked into `screens/settings.png` (custom font), so update that image by hand and rebuild the `.rgb565`.
+
 ## Hardware mapping
 
 - RF switch tree, 5 relays K1..K5 on GPIO0,1,2,3,5 (header pins 6,8,10,12,16), active-low modules (`ACTIVE_LOW` in `src/main.cpp`). K1 picks the K2/K3 branch; K2 = IN1/IN2; K3 picks K4/K5; K4 = IN3/IN4; K5 = IN5/IN6. `ROUTE_MASK` in `src/main.cpp` maps route 1..6 to relay states (NC = first input of each pair; edit if wiring differs). The variant must define `PICO_RP2350B 1`, otherwise the core rejects GPIO >= 30 (SD CS is 31). GPIO4 is LCD MISO (SPI0), do not use.

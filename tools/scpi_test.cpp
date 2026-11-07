@@ -1,4 +1,7 @@
 // Host check of the SCPI core: g++ -std=c++17 -Isrc tools/scpi_test.cpp src/scpi.cpp -o /tmp/scpi_test && /tmp/scpi_test
+#ifndef FW_VERSION
+#define FW_VERSION "0.0.0"
+#endif
 #include "scpi.h"
 #include <assert.h>
 #include <stdio.h>
@@ -16,7 +19,7 @@ static std::string ask(const char *line) { got.clear(); scpi_handle(line, sink);
 #define EQ(line, want) do { auto r = ask(line); if (r != want) { printf("FAIL %s -> '%s' want '%s'\n", line, r.c_str(), want); return 1; } } while (0)
 
 int main() {
-  EQ("*IDN?", "DIY,OSP-EMU,000001,0.3\n");
+  EQ("*IDN?", "DIY,OSP-EMU,000001," FW_VERSION "\n");
   EQ("*OPC?", "1\n");
   EQ("SYST:ERR?", "0,\"No error\"\n");
 
