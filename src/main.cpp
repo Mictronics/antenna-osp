@@ -50,8 +50,9 @@ uint8_t route_get() {
 static void reply(const char *s) { RS485.print(s); }
 
 void setup() {
-  relays_apply(0x3F, 0);  // set levels first so pins never glitch a relay on
+  // pinMode() resets the output latch to LOW (= relay on), so drive the idle level after it.
   for (size_t i = 0; i < NCH; i++) pinMode(RELAY_PINS[i], OUTPUT);
+  relays_apply(0x3F, 0);
   RS485.setTX(RS485_TX);
   RS485.setRX(RS485_RX);
   RS485.begin(115200);
