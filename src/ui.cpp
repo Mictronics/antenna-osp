@@ -117,19 +117,24 @@ void ui_draw_route() {
   shown = r;
 }
 
+static bool blit(File &f) {
+  static uint8_t strip[LCD_W * 2 * 16];  // 16 rows
+  if (!f) return false;
+  f.seek(0);
+  for (uint16_t y = 0; y < LCD_H; y += 16) {
+    if (f.read(strip, sizeof(strip)) != (int)sizeof(strip)) break;
+    display_blit(0, y, LCD_W, 16, strip);
+  }
+  return true;
+}
+
 static void drawScreen() {
   const Screen &s = SCREENS[cur];
-  static uint8_t strip[LCD_W * 2 * 16];  // 16 rows
   if (bg) bg.close();
   char path[32];
   snprintf(path, sizeof path, "%s%s.rgb565", s.bg, THEME_SUFFIX[theme]);
   bg = SD.open(path, "r");
-  if (bg) {
-    bg.seek(0);
-    for (uint16_t y = 0; y < LCD_H; y += 16) {
-      if (bg.read(strip, sizeof(strip)) != (int)sizeof(strip)) break;
-      display_blit(0, y, LCD_W, 16, strip);
-    }
+  if (blit(bg)) {
   } else {  // no image: plain buttons so the UI is still usable
     display_fill(0, 0, LCD_W, LCD_H, COL_BG);
     for (size_t i = 0; i < s.n; i++) display_fill(s.w[i].x, s.w[i].y, s.w[i].w, s.w[i].h, COL_BTN);
@@ -154,6 +159,11 @@ void ui_init() {
   SPI1.setRX(28);
   SD.begin(31, 25000000, SPI1);  // 25 MHz; lower if reads fail. Missing card just means plain buttons
   brightness_load();
+  char path[32];
+  snprintf(path, sizeof path, "/splash%s.rgb565", (const char *const[]){"-dark", "-hc", "-light"}[theme]);
+  File sp = SD.open(path, "r");
+  if (blit(sp)) delay(3000);
+  sp.close();
   ready = true;
   drawScreen();
 }
