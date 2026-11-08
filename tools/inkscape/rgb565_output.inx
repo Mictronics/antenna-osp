@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+  <name>RGB565 480x320 (OSP screen)</name>
+  <id>de.mictronics.antenna_osp.rgb565</id>
+  <output>
+    <extension>.rgb565</extension>
+    <mimetype>application/octet-stream</mimetype>
+    <filetypename>Big-endian RGB565 480x320 (*.rgb565)</filetypename>
+    <filetypetooltip>Raw framebuffer for the OSP SD card</filetypetooltip>
+    <dataloss>true</dataloss>
+  </output>
+  <script>
+    <command location="inx" interpreter="python">rgb565_output.py</command>
+  </script>
+</inkscape-extension>
