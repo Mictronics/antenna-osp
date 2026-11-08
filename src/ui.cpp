@@ -69,6 +69,30 @@ static void mark(Kind k, uint8_t arg, bool on) {
 
 static void drawScreen();
 
+static const uint8_t SETTINGS_SCREEN = 1;
+static const Widget BATT_BOX = {408, 55, 62, 40, NAV, 0};  // kind/arg unused
+static uint8_t batt = 4;  // icon index 0..4 = 0/25/50/75/100 %
+
+// Settings screen only: /batt-NN[-theme].rgb565 is a 62x40 image with the theme background baked in.
+static void drawBattery() {
+  if (cur != SETTINGS_SCREEN) return;
+  char path[32];
+  snprintf(path, sizeof path, "/batt-%u%s.rgb565", batt * 25, THEME_SUFFIX[theme]);
+  File f = SD.open(path, "r");
+  if (!f) return;
+  static uint8_t buf[62 * 40 * 2];
+  bool ok = f.read(buf, sizeof buf) == (int)sizeof buf;
+  f.close();
+  if (ok) display_blit(BATT_BOX.x, BATT_BOX.y, BATT_BOX.w, BATT_BOX.h, buf);
+}
+
+void ui_battery(uint8_t pct) {
+  uint8_t i = (min<uint8_t>(pct, 100) + 12) / 25;  // nearest step
+  if (i == batt) return;
+  batt = i;
+  if (ready) drawBattery();
+}
+
 static void brightness_load() {
   File f = SD.open(SETTINGS_FILE, "r");
   if (f) {
@@ -141,6 +165,7 @@ static void drawScreen() {
   }
   shown = 0;
   mark(BRIGHT, level, true);
+  drawBattery();
   ui_draw_route();
 }
 
