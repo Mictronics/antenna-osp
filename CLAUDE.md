@@ -47,5 +47,6 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 - RS485 works without direction control (module is auto-direction); `tools/rs485_test.py` passes on hardware (SCPI routing, paths, errors, remote lock).
 - Not yet tested with ELEKTRA: *IDN? format, ROUT:PATH:LAST? quoting and module detection are guesses from the manual.
 - Remote lock: any received line calls `remote_set(true)` -> `ui_remote()` shows `/remote.rgb565` (third screen, full-screen LOCAL widget); a touch or `SYST:LOC` returns to the previous screen.
+- Battery level: openUPS2 (SMBus 0x38, RSOC reg 0x0D, PEC byte must be read) on `Wire` GPIO44/45, polled every 60 s in `main.cpp` -> `ui_battery()`. Not on Wire1: touch is also 0x38. Needs I2C pull-ups; untested, no hardware yet (if absent, the icon stays at 100 %).
 - AXP2101 PMIC (Wire1 SDA34/SCL35, IRQ GPIO39) is deliberately not supported: no LiPo planned, device runs from external 5V/12V. Revisit only if a battery is fitted (then a read-only VBUS/battery% status is enough).
 - GPIO4 is claimed by SPI0 RX by default in the variant; the LCD is write-only, so it may be freed later.

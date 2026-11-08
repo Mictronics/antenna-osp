@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include "scpi.h"
 #include "ui.h"
 
@@ -9,6 +10,19 @@ static const uint8_t NROUTES = 6;
 // UART1 to the TTL-to-RS485 module (GPIO8 TX / GPIO9 RX are a valid UART1 pair).
 #define RS485 Serial2
 static const uint8_t RS485_TX = 8, RS485_RX = 9;
+
+// openUPS2 fuel gauge on i2c0 (Wire); Wire1 is the touch panel, which also sits at 0x38.
+static const uint8_t UPS_ADDR = 0x38, UPS_SDA = 44, UPS_SCL = 45, SMBUS_RSOC = 0x0D;
+
+// SMBus word read; 0xFFFF on error. The device appends a PEC byte, which must be read to stay in sync.
+static uint16_t ups_read(uint8_t cmd) {
+  Wire.beginTransmission(UPS_ADDR);
+  Wire.write(cmd);
+  if (Wire.endTransmission(false) != 0 || Wire.requestFrom(UPS_ADDR, (uint8_t)3) != 3) return 0xFFFF;
+  uint8_t lo = Wire.read(), hi = Wire.read();
+  Wire.read();
+  return hi << 8 | lo;
+}
 
 // Relay modules energise on a LOW input.
 static const bool ACTIVE_LOW = true;
@@ -58,6 +72,9 @@ void setup() {
   RS485.setTX(RS485_TX);
   RS485.setRX(RS485_RX);
   RS485.begin(115200);
+  Wire.setSDA(UPS_SDA);
+  Wire.setSCL(UPS_SCL);
+  Wire.begin();
   ui_init();  // after relays: it draws the active route
 }
 
@@ -75,6 +92,12 @@ void loop() {
     } else if (len < sizeof line - 1) {
       line[len++] = c;
     }
+  }
+  static uint32_t lastBatt = -60000;
+  if (millis() - lastBatt >= 60000) {
+    lastBatt = millis();
+    uint16_t rsoc = ups_read(SMBUS_RSOC);
+    if (rsoc <= 100) ui_battery(rsoc);
   }
   static uint32_t last;
   if (millis() - last >= 20) {  // touch poll rate
