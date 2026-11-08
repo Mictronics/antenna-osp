@@ -44,10 +44,27 @@ pio device monitor
 ## Touch UI
 
 Thin custom layer without LVGL. Each screen is a full-size background image
-`/name.rgb565` on the SD card (320x480, big-endian RGB565) plus a few widgets that
+`/name.rgb565` on the SD card (480x320, big-endian RGB565) plus a few widgets that
 select a route or switch the screen. Without an image the buttons fall back to plain
 grey. Convert artwork with `tools/png2rgb565.py`. The button rectangles are in the
 `SCREENS` table in `src/ui.cpp`.
+
+### Editing the artwork with Inkscape
+
+The sources are `screens/svg/<name>-{dark,hc,light}.svg` (480x320 px pages). The SD
+card wants `<name>.rgb565` for dark and `<name>-hc.rgb565` / `<name>-light.rgb565` for
+the other themes (the splash files are `splash-*.rgb565`).
+
+One-time setup: copy `tools/inkscape/rgb565_output.{inx,py}` into the Inkscape user
+extensions folder (Edit > Preferences > System > "User extensions"; on Linux
+`~/.config/inkscape/extensions/`), install Pillow for the Python that Inkscape uses
+(`pip install pillow`), then restart Inkscape.
+
+Per screen: edit the SVG, then File > Save a Copy, choose "Big-endian RGB565 480x320
+(\*.rgb565)" and save as the name above into `screens/`. Copy the result to the SD card
+root. Keep the page at 480x320 and the buttons where the `SCREENS` table in
+`src/ui.cpp` expects them. Text on the settings screen uses a custom font, so the
+version string is edited in the SVG by hand.
 
 ## Remote control
 
