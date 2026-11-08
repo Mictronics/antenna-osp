@@ -9,8 +9,8 @@ void relays_apply(uint8_t mask, uint8_t val);
 void remote_set(bool on);
 
 // High-contrast theme (DISPlay:THEMe); implemented by the UI.
-bool theme_get();
-void theme_set(bool hc);
+uint8_t theme_get();  // 0 NORM, 1 HCON, 2 LIGHt
+void theme_set(uint8_t t);
 
 // Handle one complete line (no terminator); every reply, newline included, goes to out().
 void scpi_handle(const char *line, void (*out)(const char *));

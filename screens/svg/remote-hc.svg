@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" width="480px" height="320px" viewBox="0 0 480 320" version="1.1" sodipodi:docname="osp-remote-high-contrast.svg" inkscape:version="1.3">
+  <sodipodi:namedview pagecolor="#ffffff" inkscape:pageshadow="2" inkscape:document-units="px" showgrid="false"/>
+  <g inkscape:groupmode="layer" inkscape:label="remote (high-contrast)" id="layer1">
+    <rect id="background" x="0" y="0" width="480" height="320" fill="#000000"/>
+    <g transform="translate(204 60.5) scale(1.125)"><path d="M16 36V24a16 16 0 0 1 32 0v12" fill="none" stroke="#FFB000" stroke-width="8"></path><rect x="4" y="34" width="56" height="44" fill="#FFB000"></rect><circle cx="32" cy="52" r="6" fill="#000000"></circle><rect x="29" y="54" width="6" height="14" fill="#000000"></rect></g>
+    <text x="108.00" y="219.50" style="font-family:B612;font-weight:bold;font-size:60px;letter-spacing:3px;fill:#FFFFFF;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">REMOTE</text>
+    <text x="181.88" y="256.50" style="font-family:B612;font-weight:bold;font-size:15px;letter-spacing:0px;fill:#E0E4E8;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">Touch to unlock</text>
+  </g>
+</svg>

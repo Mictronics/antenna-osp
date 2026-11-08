@@ -11,9 +11,9 @@
 static uint8_t relays;
 static bool remote;
 void remote_set(bool on) { remote = on; }
-static bool hc;
-bool theme_get() { return hc; }
-void theme_set(bool on) { hc = on; }
+static uint8_t hc;
+uint8_t theme_get() { return hc; }
+void theme_set(uint8_t t) { hc = t; }
 uint8_t relays_get() { return relays; }
 void relays_apply(uint8_t mask, uint8_t val) { relays = (relays & ~mask) | (val & mask); }
 
@@ -28,7 +28,8 @@ int main() {
   EQ("*OPC?", "1\n"); assert(remote);
   EQ("SYST:LOC", ""); assert(!remote);
   EQ("*OPC?", "1\n"); assert(remote);
-  EQ("DISP:THEM HCON", ""); assert(hc); EQ("DISP:THEM?", "HCON\n");
+  EQ("DISP:THEM HCON", ""); assert(hc == 1); EQ("DISP:THEM?", "HCON\n");
+  EQ("DISP:THEM LIGH", ""); assert(hc == 2); EQ("DISP:THEM?", "LIGH\n");
   EQ("DISP:THEM NORM", ""); assert(!hc); EQ("DISP:THEM?", "NORM\n");
   EQ("DISP:THEM foo", ""); EQ("SYST:ERR?", "-224,\"Illegal parameter value\"\n");
   EQ("SYST:ERR?", "0,\"No error\"\n");

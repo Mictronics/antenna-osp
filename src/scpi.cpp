@@ -219,10 +219,11 @@ static void cErrAll(SCPI_C, SCPI_P, Stream &s) {
 static void cPreset(SCPI_C, SCPI_P, Stream &) { doReset(); }
 static void cLocal(SCPI_C, SCPI_P, Stream &) { remote_set(false); }
 static void cTheme(SCPI_C c, SCPI_P p, Stream &s) {
-  if (isQuery(c)) return say(s, theme_get() ? "HCON" : "NORM");
+  if (isQuery(c)) return say(s, (const char *[]){"NORM", "HCON", "LIGH"}[theme_get()]);
   const char *a = par(p, 0);
   char k = a ? toupper(a[0]) : 0;
-  if (k == 'H' || k == 'N') theme_set(k == 'H');
+  const char *i = k ? strchr("NHL", k) : nullptr;
+  if (i) theme_set(i - "NHL");
   else err(-224, "Illegal parameter value");
 }
 static void cVersion(SCPI_C, SCPI_P, Stream &s) { say(s, "1999.0"); }

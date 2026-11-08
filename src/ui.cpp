@@ -6,7 +6,7 @@
 // A screen is a background image on SD plus touch widgets. Edit SCREENS to add pages.
 enum Kind : uint8_t { ROUTE, NAV, BRIGHT, LOCAL };  // ROUTE: input arg (1..6); NAV: screen arg; BRIGHT: backlight level arg (1..4); LOCAL: leave remote lock
 struct Widget { uint16_t x, y, w, h; Kind kind; uint8_t arg; };
-struct Screen { const char *bg;  // SD base name: /name.rgb565, or /name-hc.rgb565 in high contrast
+struct Screen { const char *bg;  // SD base name: /name.rgb565, or /name-hc.rgb565 / /name-light.rgb565
    const Widget *w; size_t n; };
 
 // Landscape 480x320. Route buttons: 3x2 grid, 146x115 px; nav button along the bottom.
@@ -32,7 +32,9 @@ static const uint16_t COL_ON = 0x07E0, COL_BG = 0x2104, COL_BTN = 0x4208;
 static uint8_t cur;
 static uint8_t prev;  // screen to return to after remote lock
 static uint8_t shown;  // route currently marked on screen, 0 = none
-static bool hc;  // high-contrast backgrounds, set via SCPI DISP:THEM
+static uint8_t theme;  // index into THEME_CH/THEME_SUFFIX, set via SCPI DISP:THEM
+static const char THEME_CH[] = "NHL";  // settings-file char: normal, high contrast, light
+static const char *const THEME_SUFFIX[] = {"", "-hc", "-light"};
 static uint8_t level = 4;  // backlight level 1..4
 static bool pressed;
 static bool ready;  // display initialised; relays may change before that
@@ -72,7 +74,8 @@ static void brightness_load() {
   if (f) {
     int v = f.read();
     if (v >= '1' && v <= '4') level = v - '0';
-    hc = f.read() == 'H';
+    const char *t = strchr(THEME_CH, f.read());
+    theme = t && *t ? t - THEME_CH : 0;
     f.close();
   }
   display_backlight(BRIGHT_PCT[level - 1]);
@@ -83,7 +86,7 @@ static void settings_save() {
   File f = SD.open(SETTINGS_FILE, FILE_WRITE);
   if (f) {
     f.write('0' + level);
-    f.write(hc ? 'H' : 'N');
+    f.write((uint8_t)THEME_CH[theme]);
     f.close();
   }
 }
@@ -96,11 +99,11 @@ static void brightness_set(uint8_t l) {
   settings_save();
 }
 
-bool theme_get() { return hc; }
+uint8_t theme_get() { return theme; }
 
-void theme_set(bool on) {
-  if (on == hc) return;
-  hc = on;
+void theme_set(uint8_t t) {
+  if (t == theme || t > 2) return;
+  theme = t;
   settings_save();
   if (ready) drawScreen();
 }
@@ -119,7 +122,7 @@ static void drawScreen() {
   static uint8_t strip[LCD_W * 2 * 16];  // 16 rows
   if (bg) bg.close();
   char path[32];
-  snprintf(path, sizeof path, "%s%s.rgb565", s.bg, hc ? "-hc" : "");
+  snprintf(path, sizeof path, "%s%s.rgb565", s.bg, THEME_SUFFIX[theme]);
   bg = SD.open(path, "r");
   if (bg) {
     bg.seek(0);
