@@ -28,7 +28,7 @@
     <text x="252.50" y="203.75" style="font-family:B612;font-weight:bold;font-size:16px;letter-spacing:0px;fill:#FFFFFF;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">RS485 · 115200 8N1</text>
     <rect x="10" y="210.5" width="229.5" height="39.5" fill="#1C1F22"/>
     <text x="22.00" y="225.25" style="font-family:B612;font-weight:bold;font-size:14px;letter-spacing:0.6px;fill:#E0E4E8;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">FIRMWARE</text>
-    <text x="22.00" y="244.25" style="font-family:B612;font-weight:bold;font-size:16px;letter-spacing:0px;fill:#FFFFFF;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">v1.0.0</text>
+    <text x="22.00" y="244.25" style="font-family:B612;font-weight:bold;font-size:16px;letter-spacing:0px;fill:#FFFFFF;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">v0.1.0</text>
     <rect x="240.5" y="210.5" width="229.5" height="39.5" fill="#1C1F22"/>
     <text x="252.50" y="225.25" style="font-family:B612;font-weight:bold;font-size:14px;letter-spacing:0.6px;fill:#E0E4E8;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">FRAME / MODULE</text>
     <text x="252.50" y="244.25" style="font-family:B612;font-weight:bold;font-size:16px;letter-spacing:0px;fill:#FFFFFF;-inkscape-font-specification:'B612 Bold'" xml:space="preserve">F01 · M01 OSP-B101</text>

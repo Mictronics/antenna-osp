@@ -16,7 +16,7 @@ PlatformIO, Arduino framework via the earlephilhower Arduino-Pico core on the co
 
 ## Versioning
 
-SemVer. The single source is `-DFW_VERSION` in `platformio.ini` (also used in `*IDN?`). To release: bump it, commit, `git tag -a vX.Y.Z -m "..."`, and push the tag. The on-screen version is baked into `screens/settings.png` (custom font), so update that image by hand and rebuild the `.rgb565`.
+SemVer. The single source is `-DFW_VERSION` in `platformio.ini` (also used in `*IDN?`). To release: bump it, commit, `git tag -a vX.Y.Z -m "..."`, and push the tag. The on-screen version is a text element in `screens/svg/settings-*.svg`; run `tools/set_version.sh` after bumping to restamp the SVGs and rebuild the PNG/`.rgb565`.
 
 ## Hardware mapping
 

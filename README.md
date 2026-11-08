@@ -63,8 +63,9 @@ extensions folder (Edit > Preferences > System > "User extensions"; on Linux
 Per screen: edit the SVG, then File > Save a Copy, choose "Big-endian RGB565 480x320
 (\*.rgb565)" and save as the name above into `screens/`. Copy the result to the SD card
 root. Keep the page at 480x320 and the buttons where the `SCREENS` table in
-`src/ui.cpp` expects them. Text on the settings screen uses a custom font, so the
-version string is edited in the SVG by hand.
+`src/ui.cpp` expects them. After bumping `FW_VERSION` in `platformio.ini`, run `tools/set_version.sh`: it stamps
+the version into the settings SVGs and rebuilds their PNG and `.rgb565` (needs the
+Inkscape CLI, Pillow and the B612 font).
 
 ## Remote control
 
