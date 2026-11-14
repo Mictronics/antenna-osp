@@ -23,7 +23,13 @@ The touch that wakes the screen does nothing else, so you cannot press a button 
 - The times are fixed in the firmware and cannot be changed from the device.
 - The 5 minute and 1 hour timers start again after every power-on.
 
-> ⚠️ *To confirm: a separate shutdown after about 8 hours is planned in the battery pack (openUPS2). It is not part of this firmware, so it is not described here.*
+## Battery pack shutdown
+
+If the device runs from the battery pack (openUPS2), the pack itself switches the device off after 8 hours on battery. This is set in the pack, not in this firmware, so the device cannot change or show it. Supply the device from the external power again to restart it.
+
+**Charging:** the pack charges only from an input voltage of 9 to 28 V, with a charging current of 2 A.
+
+> ⚠️ *To confirm: the exact behaviour of the pack timer (whether it counts only time on battery, and how it wakes up) is not tested on hardware.*
 
 ## Related
 

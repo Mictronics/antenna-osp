@@ -20,6 +20,7 @@ Set the screen brightness and read device information.
 
 - Your brightness choice is saved on the SD card and used at the next start.
 - The lowest level is 25 %. The screen is only fully dark through [automatic power saving](power-saving.md).
+- The battery level is derived from the cell voltage using the pack's `OCV_SOC*` parameters (set in the pack, not in this firmware).
 - The battery symbol is updated about once a minute and rounds to the nearest 25 %. Without a battery gauge it stays at full.
 - The colour theme cannot be changed here. It is set from a computer; see [SD card, themes and settings file](../advanced/sd-card-and-themes.md).
 
