@@ -37,6 +37,9 @@ static const char THEME_CH[] = "NHL";  // settings-file char: normal, high contr
 static const char *const THEME_SUFFIX[] = {"", "-hc", "-light"};
 static uint8_t level = 4;  // backlight level 1..4
 static bool pressed;
+static bool asleep;  // backlight off after idle
+static uint32_t lastTouch;
+static const uint32_t SLEEP_MS = 300000;  // idle time before backlight off; only touch counts, not SCPI
 static bool ready;  // display initialised; relays may change before that
 static File bg;
 
@@ -190,12 +193,26 @@ void ui_init() {
   if (blit(sp)) delay(3000);
   sp.close();
   ready = true;
+  lastTouch = millis();
   drawScreen();
 }
 
 void ui_poll() {
   uint16_t x, y;
   bool down = touch_read(x, y);
+  if (down) lastTouch = millis();
+  if (asleep) {
+    if (!down) return;
+    asleep = false;  // waking touch is swallowed, not passed to widgets
+    display_backlight(BRIGHT_PCT[level - 1]);
+    pressed = true;
+    return;
+  }
+  if (!down && millis() - lastTouch > SLEEP_MS) {
+    asleep = true;
+    display_backlight(0);
+    return;
+  }
   if (down && !pressed) {  // act on the press edge only
     const Screen &s = SCREENS[cur];
     for (size_t i = 0; i < s.n; i++) {
@@ -216,3 +233,5 @@ void ui_poll() {
   }
   pressed = down;
 }
+
+uint32_t ui_last_touch() { return lastTouch; }

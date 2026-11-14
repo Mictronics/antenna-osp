@@ -41,11 +41,14 @@ static const uint8_t ROUTE_MASK[NROUTES] = {
 
 // bit n = K(11+n); bit 5 is the virtual K16 with no hardware behind it.
 static uint8_t relays;
+static uint32_t lastRoute;  // millis() of the last relay change (UI or SCPI)
+static const uint32_t RELAY_IDLE_MS = 3600000;  // all relays off after 1 h without touch or route change
 
 uint8_t relays_get() { return relays; }
 
 void relays_apply(uint8_t mask, uint8_t val) {
   relays = (relays & ~mask) | (val & mask);
+  lastRoute = millis();
   for (size_t k = 0; k < NCH; k++) drive(k, relays >> k & 1);
   ui_draw_route();
 }
@@ -99,6 +102,8 @@ void loop() {
     uint16_t rsoc = ups_read(SMBUS_RSOC);
     if (rsoc <= 100) ui_battery(rsoc);
   }
+  uint32_t now = millis();
+  if (relays && min(now - lastRoute, now - ui_last_touch()) > RELAY_IDLE_MS) relays_apply(0x3F, 0);
   static uint32_t last;
   if (millis() - last >= 20) {  // touch poll rate
     last = millis();
