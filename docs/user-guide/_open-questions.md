@@ -1,8 +1,6 @@
 # Open questions
 
 - [ ] Photo of the assembled device and the front panel (placeholders in Getting started and Settings screen).
-- [ ] Battery gauge (openUPS2): untested, so the battery symbol behaviour is unconfirmed. Affects: Settings screen.
-- [ ] Battery pack 8 hour timer (`UPS_VBAT_SLEEP_TOUT=08:00:00`): exact behaviour on hardware. Affects: Automatic power saving.
+- [ ] Battery gauge (openUPS2): the reading works on hardware, but it shows 9 % at about 3.6 V per cell (about 25 % by the voltage table) because the gauge has not seen a full charge yet. Recheck after one full charge. Affects: Settings screen, Automatic power saving (the 8 hour pack timer is also untested).
 - [ ] RS485 terminal labels and the confirmed header pins for the module. Affects: Connecting over RS485.
-- [ ] Is a factory reset by gesture wanted? Today it is only deleting `bright.txt`. Affects: SD card article.
-- [ ] Safety, supply voltage and RF power limits are not stated by the project and are not documented.
+- [ ] Safety: the 100 W limit is the owner's choice from the relay rating (Radiall R570412000); no other safety notes (isolation, protection, VSWR) are documented.

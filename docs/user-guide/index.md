@@ -2,7 +2,7 @@
 
 antenna-osp is a desktop RF switch. It connects one of six RF inputs (IN 1 to IN 6) to a single output. You operate it by touching its 3.5" screen, or from a computer by sending text commands over an RS485 cable.
 
-You need the assembled device, a 5 V or 12 V supply, and an SD card with the screen images on it. To control it from a computer you also need an RS485 adapter.
+You need the assembled device, a 12 to 28 V supply, and an SD card with the screen images on it. To control it from a computer you also need an RS485 adapter.
 
 ## For everyone
 

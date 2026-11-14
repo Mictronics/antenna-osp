@@ -4,7 +4,8 @@ Power on the device and check that it started correctly.
 
 ## Before you start
 
-- The device is wired to a 5 V or 12 V supply.
+- The device is wired to a supply of 12 to 28 V.
+- The RF power on any input does not exceed **100 W**. The coax relays are rated 100 W to 240 W depending on frequency, so 100 W is the limit at every frequency. The device is mainly meant for receiving.
 - An SD card containing the screen images is inserted. See [SD card, themes and settings file](../advanced/sd-card-and-themes.md).
 
 ## Steps
