@@ -33,11 +33,12 @@ Send one command per line. Commands and keywords are not case sensitive, and lon
 
 ## Things to know
 
-- The device is RS485 only. To reach it from VISA/LAN software (for example ELEKTRA) you need a TCP to RS485 bridge on the PC side.
+- The device is RS485 only, with no network connection. ELEKTRA connects to it directly through the USB RS485 adapter; see [Using the device from ELEKTRA](elektra.md).
 - Commands that return nothing (for example `ROUT:CLOS`) send no reply, so check with `SYST:ERR?`.
 
 > ⚠️ *To confirm: the exact RS485 terminal labels and which board pins the module is wired to (GPIO8 and GPIO9 are used by the firmware).*
 
 ## Related
 
+- [Using the device from ELEKTRA](elektra.md)
 - [Command reference](command-reference.md)

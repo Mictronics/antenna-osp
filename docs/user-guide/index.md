@@ -21,6 +21,7 @@ You need the assembled device, a 5 V or 12 V supply, and an SD card with the scr
 | Article | What you can do with it |
 |---|---|
 | [Connecting over RS485](advanced/rs485-connection.md) | Set up the serial link |
+| [Using the device from ELEKTRA](advanced/elektra.md) | Set up the Generic Switching Unit driver with one command per input |
 | [Command reference](advanced/command-reference.md) | Switch inputs and query the device with SCPI commands |
 | [SD card, themes and settings file](advanced/sd-card-and-themes.md) | Prepare the card, change the colour theme, reset the settings |
 | [Updating the firmware](advanced/updating-firmware.md) | Build and flash a new version |

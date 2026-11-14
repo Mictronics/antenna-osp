@@ -75,8 +75,7 @@ Up to 8 errors are queued. Errors you may see: -102 Syntax error, -109 Missing p
 - A route change restarts the 1 hour relay timer, queries do not. See [Automatic power saving](../everyone/power-saving.md).
 - Not implemented: path export and import, `ROUT:PATH:COMB?`, `CONF:*`, trigger and legacy commands.
 
-> ⚠️ *To confirm: the `*IDN?` text, the quoting of `ROUT:PATH:LAST?` and module detection have not been tested with ELEKTRA.*
-
 ## Related
 
 - [Connecting over RS485](rs485-connection.md)
+- [Using the device from ELEKTRA](elektra.md)
