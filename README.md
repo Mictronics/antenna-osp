@@ -75,8 +75,9 @@ Implemented: the common commands (`*IDN? *RST *CLS *OPC *ESR? *STB?` and friends
 `SYST:ERR?`, `ROUT:CLOS`, `ROUT:PATH` (define, delete, catalog, last, multiple) and
 `DIAG:SERV:HWIN?`. Not implemented: path export/import, `CONF:*`, trigger commands.
 
-The device is RS485 only (to avoid Ethernet EMC noise). To control it from
-VISA/LAN software, put a TCP-to-RS485 proxy on the PC side.
+The device is RS485 only (to avoid Ethernet EMC noise). ELEKTRA talks to it directly
+through a USB RS485 adapter using the "Generic Switching Unit" driver with one
+free command string per switch setting, so no proxy and no OSP identification are needed.
 
 The SCPI dispatch uses a [fork of the Vrekrer SCPI parser](https://github.com/Mictronics/scpi-parser)
 with the `SCPI_QUOTE_AWARE` option. To test the command handling without hardware, see
