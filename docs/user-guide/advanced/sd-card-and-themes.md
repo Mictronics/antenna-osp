@@ -11,6 +11,7 @@ All screen pictures are on the SD card. Use a FAT32 or exFAT card.
 | `splash-dark`, `splash-hc`, `splash-light` | Start-up picture |
 | `batt-0`, `batt-25`, `batt-50`, `batt-75`, `batt-100` (with `-hc` / `-light`) | Battery symbols on the Settings screen |
 | `bright.txt` | Created by the device: brightness and theme |
+| `paths.txt` | Created by the device: the stored paths. Delete it to remove all paths |
 
 Pictures are 480 x 320 pixels, big-endian RGB565, ready-made in the project's `screens` folder.
 

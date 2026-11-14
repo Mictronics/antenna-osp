@@ -126,6 +126,28 @@ static void brightness_set(uint8_t l) {
   settings_save();
 }
 
+static const char *PATHS_FILE = "/paths.txt";
+
+void paths_write(const char *text) {
+  SD.remove(PATHS_FILE);
+  File f = SD.open(PATHS_FILE, FILE_WRITE);
+  if (f) {
+    f.print(text);
+    f.close();
+  }
+}
+
+size_t paths_read(char *buf, size_t cap) {
+  size_t n = 0;
+  File f = SD.open(PATHS_FILE, "r");
+  if (f) {
+    n = f.read((uint8_t *)buf, cap - 1);
+    f.close();
+  }
+  buf[n] = 0;
+  return n;
+}
+
 uint8_t theme_get() { return theme; }
 
 void theme_set(uint8_t t) {

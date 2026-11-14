@@ -17,6 +17,10 @@ void theme_set(uint8_t t) { hc = t; }
 uint8_t relays_get() { return relays; }
 void relays_apply(uint8_t mask, uint8_t val) { relays = (relays & ~mask) | (val & mask); }
 
+static std::string store;
+void paths_write(const char *s) { store = s; }
+size_t paths_read(char *b, size_t cap) { size_t n = std::min(store.size(), cap - 1); memcpy(b, store.data(), n); b[n] = 0; return n; }
+
 static std::string got;
 static void sink(const char *s) { got += s; }
 static std::string ask(const char *line) { got.clear(); scpi_handle(line, sink); return got; }
@@ -85,5 +89,14 @@ int main() {
   EQ("ROUT:PATH:DEF \"x\",(@F01M01(0111))", ""); EQ("ROUT:PATH:DEL:ALL", ""); EQ("ROUT:PATH:CAT?", "\"\"\n");
   EQ("ROUT:CLOS? (@F01M01(0111,0112,0113,0114,0115,0116,0101,0102,0103,0104,0105,0106))", "1,0,0,0,0,0,1,0,0,0,0,0\n"); // 12 items; K11 is still on
   EQ("ROUT:CLOS? (@F01M01(0111))", "1\n");
+  // persistence: saved on change, restored by scpi_load_paths()
+  EQ("ROUT:PATH:DEF \"A\",(@F01M01(0111,0012))", ""); assert(store == "03 01 A\n");
+  EQ("ROUT:PATH:DEF \"B x\",(@F01M01(0113))", ""); assert(store == "03 01 A\n04 04 B x\n");
+  EQ("ROUT:PATH:DEL \"A\"", ""); assert(store == "04 04 B x\n");
+  EQ("ROUT:PATH:DEL:ALL", ""); assert(store == "");
+  store = "03 01 A\n04 04 B x\nzz\n3f ff C\n";  // third line is junk, fourth has val outside mask
+  scpi_load_paths();
+  EQ("ROUT:PATH:CAT?", "\"A\",\"B x\",\"C\"\n");
+  EQ("ROUT:PATH:DEF? \"C\"", "(@F01M01(0111,0112,0113,0114,0115,0116))\n");
   puts("scpi ok");
 }

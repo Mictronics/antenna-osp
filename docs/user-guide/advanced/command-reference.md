@@ -39,7 +39,7 @@ State **01** energises the relay, **00** releases it. An item in a list is the s
 
 ## Paths
 
-A path is a stored relay setting with a name. Paths are kept in memory only and are lost at power-off. You can store up to 24, each with up to 16 relays and a name of up to 39 characters.
+A path is a stored relay setting with a name. Paths are saved on the SD card and are still there after a restart. Without a card they are lost at power-off. You can store up to 24, each with up to 16 relays and a name of up to 39 characters.
 
 | Command | Effect |
 |---|---|

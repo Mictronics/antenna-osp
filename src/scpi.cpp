@@ -48,7 +48,7 @@ static void say(Stream &s, const char *fmt, ...) {
   s.print(buf);
 }
 
-// ---- paths (RAM only) ----
+// ---- paths (RAM, mirrored to SD) ----
 struct Path { char name[40]; uint8_t mask, val; bool used; };
 static Path paths[MAXPATH];
 static char lastPath[40] = "<Reset State>";
@@ -57,6 +57,32 @@ static bool bulk;
 static Path *findPath(const char *name) {
   for (auto &p : paths) if (p.used && !strcmp(p.name, name)) return &p;
   return nullptr;
+}
+
+// One line per path: "<mask hex> <val hex> <name>". Rewritten on every change; a power cut mid-write loses the paths.
+static void pathsSave() {
+  static char buf[MAXPATH * 48];  // 2 + 1 + 2 + 1 + 39 + newline = 46 per line
+  size_t n = 0;
+  for (auto &p : paths)
+    if (p.used) n += snprintf(buf + n, sizeof buf - n, "%02x %02x %s\n", p.mask, p.val, p.name);
+  buf[n] = 0;
+  paths_write(buf);
+}
+
+void scpi_load_paths() {
+  static char buf[MAXPATH * 48 + 1];
+  for (auto &p : paths) p.used = false;
+  paths_read(buf, sizeof buf);
+  int i = 0;
+  for (char *l = buf, *e; *l && i < MAXPATH && (e = strchr(l, '\n')); l = e + 1) {
+    *e = 0;
+    if (strlen(l) < 7 || l[2] != ' ' || l[5] != ' ') continue;
+    Path &q = paths[i++];
+    q.mask = strtoul(l, nullptr, 16) & 0x3F;
+    q.val = strtoul(l + 3, nullptr, 16) & q.mask;
+    snprintf(q.name, sizeof q.name, "%s", l + 6);
+    q.used = true;
+  }
 }
 
 // ---- helpers ----
@@ -301,6 +327,7 @@ static void cPathDef(SCPI_C c, SCPI_P p, Stream &s) {
   pt->used = true;
   snprintf(pt->name, sizeof pt->name, "%s", name);
   toMaskVal(it, n, &pt->mask, &pt->val);
+  pathsSave();
 }
 
 static void cPathDel(SCPI_C, SCPI_P p, Stream &) {
@@ -310,8 +337,12 @@ static void cPathDel(SCPI_C, SCPI_P p, Stream &) {
     if (!parseStr(&a, name, sizeof name)) return;
     if (Path *pt = findPath(name)) pt->used = false;
   }
+  pathsSave();
 }
-static void cPathDelAll(SCPI_C, SCPI_P, Stream &) { for (auto &pt : paths) pt.used = false; }
+static void cPathDelAll(SCPI_C, SCPI_P, Stream &) {
+  for (auto &pt : paths) pt.used = false;
+  pathsSave();
+}
 
 static void cPathCat(SCPI_C, SCPI_P p, Stream &s) {
   const char *a = par(p, 0);
@@ -358,6 +389,7 @@ static void registerCommands() {
   static bool done;
   if (done) return;
   done = true;
+  scpi_load_paths();  // first command: the SD card is up by now
   struct { const char *cmd; SCPI_caller_t fn; } cmds[] = {
       {"*IDN?", cIdn}, {"*RST", cRst}, {"*CLS", cCls}, {"*OPC", cOpc}, {"*OPC?", cOpc},
       {"*WAI", cNop}, {"*TRG", cNop}, {"*PSC", cNop}, {"*PSC?", cZero}, {"*TST?", cZero},

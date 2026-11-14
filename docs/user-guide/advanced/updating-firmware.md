@@ -19,7 +19,7 @@
 ## Things to know
 
 - The SD card and your settings are not changed by an update.
-- Paths defined over RS485 are lost at every restart.
+- Paths defined over RS485 are kept on the SD card and survive an update.
 - The on-screen version is part of the picture on the SD card. After a version change, restamp the pictures with `tools/set_version.sh` and copy them to the card; see the project README.
 
 ## Related
