@@ -16,6 +16,7 @@ static const uint8_t UPS_ADDR = 0x38, UPS_SDA = 44, UPS_SCL = 45, SMBUS_RSOC = 0
 
 // SMBus word read; 0xFFFF on error. The device appends a PEC byte, which must be read to stay in sync.
 static uint16_t ups_read(uint8_t cmd) {
+  delay(1);  // back-to-back reads return stale data (the constant 0xC4E2) without a gap
   Wire.beginTransmission(UPS_ADDR);
   Wire.write(cmd);
   if (Wire.endTransmission(false) != 0 || Wire.requestFrom(UPS_ADDR, (uint8_t)3) != 3) return 0xFFFF;
