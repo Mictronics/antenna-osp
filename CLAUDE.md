@@ -21,7 +21,7 @@ SemVer. The single source is `-DFW_VERSION` in `platformio.ini` (also used in `*
 ## Hardware mapping
 
 - RF switch tree, 5 relays K1..K5 on GPIO0,1,2,3,5 (header pins 6,8,10,12,16), active-low modules (`ACTIVE_LOW` in `src/main.cpp`). K1 picks the K2/K3 branch; K2 = IN1/IN2; K3 picks K4/K5; K4 = IN3/IN4; K5 = IN5/IN6. `ROUTE_MASK` in `src/main.cpp` maps route 1..6 to relay states (NC = first input of each pair; edit if wiring differs). The variant must define `PICO_RP2350B 1`, otherwise the core rejects GPIO >= 30 (SD CS is 31). GPIO4 is LCD MISO (SPI0), do not use.
-- SCPI over RS485 via Waveshare TTL-to-RS485 (C) module on UART1 (`Serial2`): TX=GPIO8, RX=GPIO9, 115200 baud.
+- SCPI over RS485 via Waveshare TTL-to-RS485 (C) module on UART1 (`Serial2`): TX=GPIO8, RX=GPIO9, 115200 baud (confirmed on hardware; these are camera-connector pins, a first no-reaction was a solder fault. GPIO44/45 are now the openUPS `Wire` bus, so not a UART alternative).
 - Taken by board (from Waveshare examples in ~/git/RP2350-Touch-LCD-3.5): LCD SPI0 CLK18/MOSI19/MISO4/CS21/DC20/RST23/BL22; touch+IMU+RTC+codec on Wire1 SDA34/SCL35, touch RST24/INT25, IMU INT1 14, battery ADC 28. Camera uses GPIO0+ only if fitted. Free header GPIOs: 6,7,41-47.
 
 ## UI
@@ -43,7 +43,6 @@ Parser changes go in the fork (local repo `~/VisualStudioCode/scpi-parser`, mast
 ## Open items
 
 - Custom board in `boards/` + variant in `variants/` (RP2350B, 16 MB flash), pins from Waveshare examples. Wire0 pins in the variant are unused placeholders.
-- RS485 pins: GPIO8/9 (`Serial2`) are camera pins, not confirmed on the header; a first no-reaction on new wiring was a solder fault, so check joints and the TXD-to-RX crossover before changing pins. GPIO44/45 (`Serial1`, UART0) is the valid alternative.
 - RS485 works without direction control (module is auto-direction); `tools/rs485_test.py` passes on hardware (SCPI routing, paths, errors, remote lock).
 - `*IDN?` format, `ROUT:PATH:LAST?` quoting and HWIN module detection are guesses from the manual; they only matter if the OSP driver is ever used instead of the Generic Switching Unit.
 - Remote lock: any received line calls `remote_set(true)` -> `ui_remote()` shows `/remote.rgb565` (third screen, full-screen LOCAL widget); a touch or `SYST:LOC` returns to the previous screen.
