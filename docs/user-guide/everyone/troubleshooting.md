@@ -12,6 +12,7 @@
 | No green frame on any input | A computer set a relay combination that is not an input | Touch an input button |
 | The computer gets no reply | Wiring, adapter or settings wrong | See [Connecting over RS485](../advanced/rs485-connection.md) |
 | Battery symbol always full | No battery gauge answers | Expected without a gauge |
+| Plug with check mark instead of the battery symbol | Battery is full and charging has stopped (or the full battery is idle with almost no load) | Normal, no action needed |
 | Brightness is back at 100 % after restart | The card could not be written (write-protected or missing) | Check the SD card |
 
 > ⚠️ *To confirm: troubleshooting for relay and wiring faults depends on your build and is not covered by the firmware.*

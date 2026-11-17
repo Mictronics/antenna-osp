@@ -10,6 +10,7 @@ All screen pictures are on the SD card. Use a FAT32 or exFAT card.
 | the same with `-hc` / `-light` | High contrast and light theme |
 | `splash-dark`, `splash-hc`, `splash-light` | Start-up picture |
 | `batt-0`, `batt-25`, `batt-50`, `batt-75`, `batt-100` (with `-hc` / `-light`) | Battery symbols on the Settings screen |
+| `batt-full` (with `-hc` / `-light`) | Plug with check mark: battery fully charged. Same 62 x 40 pixel format. If missing, the `batt-100` symbol is shown instead |
 | `bright.txt` | Created by the device: brightness and theme |
 | `paths.txt` | Created by the device: the stored paths. Delete it to remove all paths |
 

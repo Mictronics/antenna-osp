@@ -33,6 +33,7 @@ The device has no physical buttons. All operation is by touching the screen.
 | Screen completely dark | Backlight off after 5 minutes without a touch; touch to wake |
 | Plain grey rectangles without text | The SD card images are missing |
 | Battery symbol on the Settings screen | Battery level in 25 % steps |
+| Plug with check mark on the Settings screen | Battery fully charged, charging stopped |
 
 ## Relay and input mapping
 

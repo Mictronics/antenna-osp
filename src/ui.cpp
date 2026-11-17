@@ -74,14 +74,19 @@ static void drawScreen();
 
 static const uint8_t SETTINGS_SCREEN = 1;
 static const Widget BATT_BOX = {408, 55, 62, 40, NAV, 0};  // kind/arg unused
-static uint8_t batt = 4;  // icon index 0..4 = 0/25/50/75/100 %
+static uint8_t batt = 4;  // icon index 0..4 = 0/25/50/75/100 %, 5 = charging complete
 
 // Settings screen only: /batt-NN[-theme].rgb565 is a 62x40 image with the theme background baked in.
 static void drawBattery() {
   if (cur != SETTINGS_SCREEN) return;
-  char path[32];
-  snprintf(path, sizeof path, "/batt-%u%s.rgb565", batt * 25, THEME_SUFFIX[theme]);
+  char path[32], name[8];
+  if (batt > 4) strcpy(name, "full"); else snprintf(name, sizeof name, "%u", batt * 25);
+  snprintf(path, sizeof path, "/batt-%s%s.rgb565", name, THEME_SUFFIX[theme]);
   File f = SD.open(path, "r");
+  if (!f && batt > 4) {  // no batt-full image: fall back to 100 %
+    snprintf(path, sizeof path, "/batt-100%s.rgb565", THEME_SUFFIX[theme]);
+    f = SD.open(path, "r");
+  }
   if (!f) return;
   static uint8_t buf[62 * 40 * 2];
   bool ok = f.read(buf, sizeof buf) == (int)sizeof buf;
@@ -89,8 +94,8 @@ static void drawBattery() {
   if (ok) display_blit(BATT_BOX.x, BATT_BOX.y, BATT_BOX.w, BATT_BOX.h, buf);
 }
 
-void ui_battery(uint8_t pct) {
-  uint8_t i = (min<uint8_t>(pct, 100) + 12) / 25;  // nearest step
+void ui_battery(uint8_t pct, bool full) {
+  uint8_t i = full ? 5 : (min<uint8_t>(pct, 100) + 12) / 25;  // nearest step
   if (i == batt) return;
   batt = i;
   if (ready) drawBattery();

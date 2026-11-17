@@ -12,7 +12,7 @@ static const uint8_t NROUTES = 6;
 static const uint8_t RS485_TX = 8, RS485_RX = 9;
 
 // openUPS2 fuel gauge on i2c0 (Wire); Wire1 is the touch panel, which also sits at 0x38.
-static const uint8_t UPS_ADDR = 0x38, UPS_SDA = 44, UPS_SCL = 45, SMBUS_RSOC = 0x0D;
+static const uint8_t UPS_ADDR = 0x38, UPS_SDA = 44, UPS_SCL = 45, SMBUS_RSOC = 0x0D, SMBUS_CURRENT = 0x0A;
 
 // SMBus word read; 0xFFFF on error. The device appends a PEC byte, which must be read to stay in sync.
 static uint16_t ups_read(uint8_t cmd) {
@@ -101,7 +101,10 @@ void loop() {
   if (millis() - lastBatt >= 60000) {
     lastBatt = millis();
     uint16_t rsoc = ups_read(SMBUS_RSOC);
-    if (rsoc <= 100) ui_battery(rsoc);
+    uint16_t raw = ups_read(SMBUS_CURRENT);
+    int16_t mA = raw == 0xFFFF ? 9999 : (int16_t)raw;  // read error must not look like "no current"
+    // Complete = full and charge current gone; idle on battery below 30 mA would also match.
+    if (rsoc <= 100) ui_battery(rsoc, rsoc >= 99 && abs(mA) < 30);
   }
   uint32_t now = millis();
   if (relays && min(now - lastRoute, now - ui_last_touch()) > RELAY_IDLE_MS) relays_apply(0x3F, 0);
