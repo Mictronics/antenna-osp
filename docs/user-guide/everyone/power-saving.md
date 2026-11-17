@@ -29,7 +29,7 @@ If the device runs from the battery pack (openUPS2), the pack itself switches th
 
 **Charging:** the pack charges only from an input voltage of 9 to 28 V, with a charging current of 2 A.
 
-> ⚠️ *To confirm: the exact behaviour of the pack timer (whether it counts only time on battery, and how it wakes up) is not tested on hardware.*
+> *To confirm: the exact behaviour of the pack timer (whether it counts only time on battery, and how it wakes up) is not tested on hardware.*
 
 ## Related
 

@@ -15,4 +15,4 @@
 | Plug with check mark instead of the battery symbol | Battery is full and charging has stopped (or the full battery is idle with almost no load) | Normal, no action needed |
 | Brightness is back at 100 % after restart | The card could not be written (write-protected or missing) | Check the SD card |
 
-> ⚠️ *To confirm: troubleshooting for relay and wiring faults depends on your build and is not covered by the firmware.*
+> *To confirm: troubleshooting for relay and wiring faults depends on your build and is not covered by the firmware.*
