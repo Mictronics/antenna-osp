@@ -26,8 +26,6 @@ Set the screen brightness and read device information.
 - The plug-with-check symbol appears when the battery level is 99 % or higher and almost no current flows (less than 30 mA). After charging stops it can take up to a minute to appear. It also appears on a full battery that is idle with almost no load, because the gauge cannot tell whether external power is connected.
 - The colour theme cannot be changed here. It is set from a computer; see [SD card, themes and settings file](../advanced/sd-card-and-themes.md).
 
-> ⚠️ *To confirm: the battery gauge (openUPS2) reading has not been tested on hardware yet.*
-
 ## Related
 
 - [Automatic power saving](power-saving.md)
