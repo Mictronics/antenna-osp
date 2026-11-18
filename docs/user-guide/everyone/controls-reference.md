@@ -35,6 +35,10 @@ The device has no physical buttons. All operation is by touching the screen.
 | Battery symbol on the Settings screen | Battery level in 25 % steps |
 | Plug with check mark on the Settings screen | Battery fully charged, charging stopped |
 
+![Battery status symbol](../images/batt-75.png)
+
+![Battery fully charged](../images/batt-full.png)
+
 ## Relay and input mapping
 
 | Input | Relays energised |

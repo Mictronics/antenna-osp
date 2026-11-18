@@ -8,7 +8,7 @@ Set the screen brightness and read device information.
 2. Touch one of the brightness buttons **25%**, **50%**, **75%** or **100%**. The screen changes at once and a green frame marks your choice.
 3. Touch **Back** to return to the main screen.
 
-> *Placeholder: photo of the Settings screen with one brightness button framed in green.*
+![Settings screen](../images/settings.png)
 
 ## What you should see
 

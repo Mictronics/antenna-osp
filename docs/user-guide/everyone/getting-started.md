@@ -14,7 +14,7 @@ Power on the device and check that it started correctly.
 2. A start-up (splash) picture appears for about 3 seconds.
 3. The **main screen** appears: six large buttons **IN 1** to **IN 6** and a blue **Settings** button along the bottom.
 
-> *Placeholder: photo of the assembled device showing the main screen.*
+![Main screen](../images/main.png)
 
 ## What you should see
 
